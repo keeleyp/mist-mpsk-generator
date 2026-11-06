@@ -1,0 +1,10 @@
+*.ini
+!mist_mpsk_generator.ini.example
+*.csv
+!sites.csv.example
+!psks.csv.example
+output/
+*.xlsx
+*.pdf
+__pycache__/
+.DS_Store

@@ -1,0 +1,5 @@
+name,ssid,vlan
+Finance,Corp-PSK,110
+HR,Corp-PSK,120
+IoT Devices,IoT-PSK,200
+Visitors,Guest-PSK,{{guest_vlan}}

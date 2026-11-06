@@ -1,0 +1,36 @@
+; Mist MPSK Generator - copy to mist_mpsk_generator.ini and fill in.
+; The real .ini holds your API token: it is git-ignored, keep it that way.
+
+[mist]
+; API host for your org's cloud, e.g. api.mist.com, api.eu.mist.com, api.gc3.mist.com
+; (short names also work: global, eu, gc1, gc2, gc3, ac2 ...)
+cloud = api.eu.mist.com
+api_token = YOUR_API_TOKEN
+org_id = 00000000-0000-0000-0000-000000000000
+
+[psk]
+; Characters each key is built from (duplicates are ignored).
+; This default leaves out look-alikes (0 O 1 l I) and QR-escaped characters (\ ; , : ").
+allowed_characters = ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!#$%&*+-=?@
+; Key length, 8-63
+length = 12
+
+[files]
+; Relative paths are relative to this ini file.
+sites_csv = sites.csv
+psks_csv = psks.csv
+output_dir = output
+
+[pdf]
+; A4 or Letter
+page_size = A4
+; Left-hand footer text (default: the site name). Right-hand side is always "Page x of y".
+footer_text =
+
+; Optional - only needed behind a TLS-inspecting proxy such as Zscaler.
+; Leave the whole section out for normal behaviour.
+;[network]
+;ca_bundle = ~/certs/zscaler_root_ca.pem
+;verify_ssl = true
+;http_proxy = http://proxy.example.com:8080
+;https_proxy = http://proxy.example.com:8080
