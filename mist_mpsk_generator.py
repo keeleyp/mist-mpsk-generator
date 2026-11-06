@@ -435,6 +435,24 @@ class DeleteItem:
     status: str = "pending"
 
 
+def dynamic_psk_problem(wlans: list[dict]) -> str | None:
+    """Site PSKs (what this tool creates) are only used by a WLAN whose keys are
+    local - 'Multiple passphrases' with no dynamic PSK. A dynamic PSK WLAN takes
+    its keys from RADIUS or from org-level Cloud PSKs, so site PSKs would be
+    ignored. Returns why the WLAN can't use site PSKs, or None if it can."""
+    for w in wlans:
+        dpsk = w.get("dynamic_psk") or {}
+        if not dpsk.get("enabled"):
+            continue
+        source = dpsk.get("source") or "radius"   # API default is radius
+        if source == "cloud_psks":
+            return ("uses Cloud PSKs (org-level keys) - site PSKs created by this tool "
+                    "would be ignored. Use local multiple passphrases on this WLAN.")
+        return (f"takes its keys from {source.upper() if source == 'radius' else source} "
+                "(dynamic PSK) - site PSKs created by this tool would be ignored.")
+    return None
+
+
 def resolve_sites(api: Mist, cfg: Config, site_names: list[str]) -> tuple[dict, list, int]:
     """Reads the org and matches the CSV site names to site IDs.
     Returns (org, [(name, site_id)], number of sites in the org)."""
@@ -495,8 +513,9 @@ def build_plan(api: Mist, resolved: list, specs: list[PskSpec]) -> tuple[list[Pl
                 types = ", ".join(sorted({(w.get('auth') or {}).get('type', '?') for w in candidates}))
                 problems.append(f"{name}: SSID {spec.ssid!r} uses auth type {types}, not PSK")
                 continue
-            if any((w.get("dynamic_psk") or {}).get("enabled") for w in psk_wlans):
-                problems.append(f"{name}: SSID {spec.ssid!r} uses RADIUS dynamic PSK - cloud PSKs are not used")
+            reason = dynamic_psk_problem(psk_wlans)
+            if reason:
+                problems.append(f"{name}: SSID {spec.ssid!r} {reason}")
                 continue
             hidden = any(w.get("hide_ssid") for w in psk_wlans)
             plan.append(PlanItem(name, site_id, spec, hidden,

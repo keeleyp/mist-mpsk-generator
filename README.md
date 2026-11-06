@@ -79,7 +79,7 @@ If any check fails, the script lists every problem and stops before anything is 
 
 - the ini and both CSVs are valid (no duplicate names, VLANs in range, SSIDs no longer than 32 bytes)
 - every site name exists in the org, and exactly once
-- every SSID is an enabled WLAN at each site, using `/sites/{id}/wlans/derived` so template WLANs count, with PSK auth and not RADIUS dynamic PSK
+- every SSID is an enabled WLAN at each site, using `/sites/{id}/wlans/derived` so template WLANs count, with PSK auth and local keys (multiple passphrases). WLANs using dynamic PSK, either RADIUS or org-level Cloud PSKs, are rejected because they ignore site PSKs
 
 ## Behaviour
 
